@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "@aternus/csv-to-xlsx": "^2.1.5",
+    "@faker-js/faker": "^8.4.1",
+    "archiver": "^7.0.1",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.19.2",
+    "express-fileupload": "^1.5.1",
+    "jimp": "^0.22.12",
+    "pdfkit": "^0.15.0",
+    "registry.npmjs.org": "^1.0.1",
+    "sequelize": "^6.37.4",
+    "sqlite3": "^5.1.7"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.7",
+    "tailwindcss": "^3.4.7"
+  },
+  "scripts": {
+    "start": "concurrently \"node server.js\" \"npx tailwindcss -i ./public/style.css -o ./public/output.css --watch\"",
+    "start:dev": "concurrently \"nodemon server.js\" \"npx tailwindcss -i ./public/style.css -o ./public/output.css --watch\"",
+    "install": "npm install"
+  }
+}

@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Certificate Generator</title>
+    <link href="output.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      function validateForm() {
+        const lengthInput = document.getElementById("certificate");
+        const length = parseInt(lengthInput.value);
+
+        if (isNaN(length) || length < 2) {
+          document.getElementById("error").innerText = "Minimal value is 2.";
+          return false;
+        } else {
+          document.getElementById("error").innerText = "";
+          return true;
+        }
+      }
+
+      function handleSubmit(event) {
+        event.preventDefault();
+
+        if (validateForm()) {
+          document.getElementById("generateForm").submit();
+        }
+      }
+    </script>
+  </head>
+  <body
+    class="max-w-screen-sm mx-auto p-4 bg-slate-100 h-screen flex justify-center flex-col align-middle"
+  >
+    <h1 class="text-3xl font-bold text-center -mt-8 mb-8">
+      Certificate Generator
+    </h1>
+    <figure>
+      <image
+        src="foto-manajer.jpg"
+        class="rounded-md"
+        alt="foto-manajer-payoma-kusuma"
+      />
+      <figcaption class="text-sm text-center italic">
+        Ini foto manajer kita gais
+      </figcaption>
+    </figure>
+    <form
+      id="generateForm"
+      action="/generate-sk"
+      method="post"
+      enctype="multipart/form-data"
+      onsubmit="handleSubmit(event)"
+    >
+      <label
+        for="SK"
+        class="block text-lg font-medium leading-6 text-gray-900 mt-8"
+        >Number of SK:</label
+      >
+      <input
+        type="text"
+        name="SK"
+        id="SK"
+        class="block w-full rounded-md border-0 py-1 px-2 mt-1 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+        placeholder="0"
+        required
+      />
+      <span id="error" class="text-xs text-red-600"></span>
+      <button
+        type="submit"
+        class="block w-full rounded-md p-2 bg-stone-800 text-gray-100 mt-4 disabled:bg-slate-300"
+        id="generateButton"
+      >
+        Generate SK
+      </button>
+
+      <button
+        type="submit"
+        class="block w-full rounded-md p-2 bg-stone-800 text-gray-100 mt-4 disabled:bg-slate-300"
+        id="generateButton"
+      >
+        Generate SK
+      </button>
+
+    </form>
+  </body>
+</html>

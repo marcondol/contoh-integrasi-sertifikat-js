@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Certificate Generator</title>
+    <link href="output.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script>
+      function handleSubmit(event, certificateId, ownerName, domicile, email, categoryCertificate, certificateId, title, certificateDate, expiredDate) {
+        event.preventDefault();
+        fetch('/uploadcertificate', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            certificateId: certificateId,
+            ownerName: ownerName,
+            domicile: domicile,
+            email: email,
+            categoryCertificate: categoryCertificate,
+            title: title,
+            certificateDate: certificateDate,
+            expiredDate: expiredDate
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Certificate integrated successfully!');
+            location.reload();
+          } else {
+            alert('Failed to integrate certificate.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while integrating the certificate.');
+        });
+
+      }
+    </script>
+  </head>
+  <body
+    class="mx-auto p-4 bg-slate-100 h-screen overflow-auto"
+  >
+    <h1 class="text-3xl font-bold text-center mb-8">
+      Dumies halaman sertificate
+    </h1>
+
+    <table class="min-w-full bg-white">
+      <thead>
+        <tr>
+          <th class="py-2">ID</th>
+          <th class="py-2">Name</th>
+          <th class="py-2">domicile</th>
+          <th class="py-2">email</th>
+          <th class="py-2">categoryCertificate</th>
+          <th class="py-2">certificateId</th>
+          <th class="py-2">title</th>
+          <th class="py-2">certificateDate</th>
+          <th class="py-2">expiredDate</th>
+          <th class="py-2">URL</th>
+          <th class="py-2">Integrasi BC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% certificates.forEach(certificate => { %>
+          <tr>
+            <td class="border px-4 py-2"><%= certificate.certificateId %></td>
+            <td class="border px-4 py-2"><%= certificate.ownerName %></td>
+            <td class="border px-4 py-2"><%= certificate.domicile %></td>
+            <td class="border px-4 py-2"><%= certificate.email %></td>
+            <td class="border px-4 py-2"><%= certificate.categoryCertificate %></td>
+            <td class="border px-4 py-2"><%= certificate.certificateId %></td>
+            <td class="border px-4 py-2"><%= certificate.title %></td>
+            <td class="border px-4 py-2"><%= certificate.certificateDate %></td>
+            <td class="border px-4 py-2"><%= certificate.expiredDate %></td>
+            <td class="border px-4 py-2">
+              <a href="outputpdf/<%= certificate.certificateId %>.pdf" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">View</a>
+            </td>
+            <td class="border px-4 py-2">
+              <% certificate.isIntegrated %>
+
+              <% if (certificate.isIntegrated) { %>
+                Sudah diintegrasikan
+              <% } else { %>
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmit(event, '<%= certificate.certificateId %>', '<%= certificate.ownerName %>', '<%= certificate.domicile %>', '<%= certificate.email %>', '<%= certificate.categoryCertificate %>', '<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.certificateDate %>', '<%= certificate.expiredDate %>')">Integrate</button>
+              <% } %>
+
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+
+  </body>
+</html>
