@@ -9,6 +9,45 @@ const { Sequelize } = require("sequelize");
 const { DataTypes } = require("sequelize");
 const axios = require("axios");
 
+const opentelemetry = require('@opentelemetry/sdk-node');
+const { getNodeAutoInstrumentations } = require('@opentelemetry/auto-instrumentations-node');
+const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-base');
+const { Resource } = require('@opentelemetry/resources');
+const { SEMRESATTRS_SERVICE_NAME } = require('@opentelemetry/semantic-conventions');
+const {
+  OTLPTraceExporter,
+} = require('@opentelemetry/exporter-trace-otlp-proto');
+const { PeriodicExportingMetricReader } = require('@opentelemetry/sdk-metrics');
+const {
+  OTLPMetricExporter,
+} = require('@opentelemetry/exporter-metrics-otlp-proto');
+
+const traceExporter = new ConsoleSpanExporter();
+const sdk = new opentelemetry.NodeSDK({
+  traceExporter: new OTLPTraceExporter({
+    // optional - default url is http://localhost:4318/v1/traces
+    //url: 'http://localhost:9193/v1/traces',
+    // optional - collection of custom headers to be sent with each request, empty by default
+    headers: {},
+  }),
+  metricReader: new PeriodicExportingMetricReader({
+    exporter: new OTLPMetricExporter({
+      //url: '<your-otlp-endpoint>/v1/metrics', // url is optional and can be omitted - default is http://localhost:4318/v1/metrics
+      headers: {}, // an optional object containing custom headers to be sent with each request
+      concurrencyLimit: 1, // an optional limit on pending requests
+    }),
+  }),
+  instrumentations: [getNodeAutoInstrumentations()],
+});
+sdk.start();
+
+process.on('SIGTERM', () => {
+  sdk.shutdown()
+    .then(() => console.log('Tracing terminated'))
+    .catch((error) => console.log('Error terminating tracing', error))
+    .finally(() => process.exit(0));
+});
+
 const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: path.join(__dirname, "database.sqlite"),
@@ -188,7 +227,7 @@ app.post("/uploadcertificate", async (req, res) => {
       formData,
       {
         headers: {
-          "api-key": "",
+          "api-key": "02891343349379836284",
           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
         },
       }
@@ -201,7 +240,38 @@ app.post("/uploadcertificate", async (req, res) => {
   }
 });
 
+app.post("/uploadcertificate-direct", async (req, res) => {
+  const fileBuffer = fs.readFileSync(path.join(__dirname, 'public', 'outputpdf', `${req.body.certificateId}.pdf`));
+  const file = new Blob([fileBuffer], { type: 'application/pdf' });
+  const formData = new FormData();
+  formData.append("title", req.body.title);
+  formData.append("certificateId", req.body.certificateId);
+  formData.append("ownerName", req.body.ownerName);
+  formData.append("category", req.body.categoryCertificate);
+  formData.append("publishDate", req.body.certificateDate);
+  formData.append("expiredDate", req.body.expiredDate);
+  formData.append("email", req.body.email);
+  formData.append("image", file, `${req.body.certificateId}.pdf`);
 
+  try {
+    const response = await axios.post(
+      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/create-certificate",
+      // "http://localhost:3000/api/ori-metanesia/v1/rest-api/create-certificate",
+      formData,
+      {
+        headers: {
+          "api-key": "02891343349379836284",
+          "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
+        },
+      }
+    );
+    await Certificate.update({ isIntegrated: true }, { where: { certificateId: req.body.certificateId } });
+    res.send({ success: true, data: response.data });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error uploading certificate.");
+  }
+});
 
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);

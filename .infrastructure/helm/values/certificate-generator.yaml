@@ -1,4 +1,0 @@
-config:
-  env:
-    ENV: staging
-    PORT: 3000

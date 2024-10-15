@@ -38,6 +38,40 @@
         });
 
       }
+
+      function handleSubmitDirect(event, certificateId, ownerName, domicile, email, categoryCertificate, certificateId, title, certificateDate, expiredDate) {
+        event.preventDefault();
+        fetch('/uploadcertificate-direct', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            certificateId: certificateId,
+            ownerName: ownerName,
+            domicile: domicile,
+            email: email,
+            categoryCertificate: categoryCertificate,
+            title: title,
+            certificateDate: certificateDate,
+            expiredDate: expiredDate
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            alert('Certificate integrated successfully!');
+            location.reload();
+          } else {
+            alert('Failed to integrate certificate.');
+          }
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while integrating the certificate.');
+        });
+
+      }
     </script>
   </head>
   <body
@@ -61,6 +95,7 @@
           <th class="py-2">expiredDate</th>
           <th class="py-2">URL</th>
           <th class="py-2">Integrasi BC</th>
+          <th class="py-2">Integrasi BC Direct</th>
         </tr>
       </thead>
       <tbody>
@@ -85,6 +120,16 @@
                 Sudah diintegrasikan
               <% } else { %>
                 <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmit(event, '<%= certificate.certificateId %>', '<%= certificate.ownerName %>', '<%= certificate.domicile %>', '<%= certificate.email %>', '<%= certificate.categoryCertificate %>', '<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.certificateDate %>', '<%= certificate.expiredDate %>')">Integrate</button>
+              <% } %>
+
+            </td>
+            <td class="border px-4 py-2">
+              <% certificate.isIntegrated %>
+
+              <% if (certificate.isIntegrated) { %>
+                Sudah diintegrasikan
+              <% } else { %>
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmitDirect(event, '<%= certificate.certificateId %>', '<%= certificate.ownerName %>', '<%= certificate.domicile %>', '<%= certificate.email %>', '<%= certificate.categoryCertificate %>', '<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.certificateDate %>', '<%= certificate.expiredDate %>')">Integrate Direct</button>
               <% } %>
 
             </td>

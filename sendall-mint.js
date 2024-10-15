@@ -77,6 +77,7 @@ async function getNonIntegratedCertificates() {
 }
 
 async function sendAllCertificates(title, certificateId, ownerName, categoryCertificate, certificateDate, expiredDate, email, certificateId) {
+  const startTime = Date.now();
   const fileBuffer = fs.readFileSync(path.join(__dirname, 'public', 'outputpdf', `${certificateId}.pdf`));
   const file = new Blob([fileBuffer], { type: 'application/pdf' });
   const formData = new FormData();
@@ -91,8 +92,8 @@ async function sendAllCertificates(title, certificateId, ownerName, categoryCert
 
   try {
     const response = await axios.post(
-      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/v2/create-certificate",
-      // "http://localhost:3000/api/ori-metanesia/v1/rest-api/v2/create-certificate",
+      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/create-certificate",
+      // "http://localhost:3000/api/ori-metanesia/v1/rest-api/create-certificate",
       formData,
       {
         headers: {
@@ -102,7 +103,9 @@ async function sendAllCertificates(title, certificateId, ownerName, categoryCert
       }
     );
     await Certificate.update({ isIntegrated: true }, { where: { certificateId: certificateId } });
-
+    const endTime = Date.now();
+    await new Promise(resolve => setTimeout(resolve, 5000));// sleep for 5 seconds wait transaction to be minted
+    console.log(`Certificate ${certificateId} processed in ${endTime - startTime} ms`);
   } catch (error) {
     console.error(error);
   }
