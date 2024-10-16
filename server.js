@@ -227,7 +227,7 @@ app.post("/uploadcertificate", async (req, res) => {
       formData,
       {
         headers: {
-          "api-key": "02891343349379836284",
+          "api-key": "",
           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
         },
       }
@@ -260,7 +260,7 @@ app.post("/uploadcertificate-direct", async (req, res) => {
       formData,
       {
         headers: {
-          "api-key": "02891343349379836284",
+          "api-key": "",
           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
         },
       }

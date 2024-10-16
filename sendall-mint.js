@@ -97,7 +97,7 @@ async function sendAllCertificates(title, certificateId, ownerName, categoryCert
       formData,
       {
         headers: {
-          "api-key": "02891343349379836284",
+          "api-key": "",
           "Content-Type": `multipart/form-data; boundary=${formData._boundary}`,
         },
       }
