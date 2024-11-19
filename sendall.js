@@ -66,6 +66,7 @@ async function getNonIntegratedCertificates() {
         });
         for (const certificate of certificates) {
             await sendAllCertificates(certificate.title, certificate.certificateId, certificate.ownerName, certificate.categoryCertificate, certificate.certificateDate, certificate.expiredDate, certificate.email, certificate.certificateId);
+            await new Promise(resolve => setTimeout(resolve, 4000));
             console.log('Certificate sent:', certificate.certificateId);
         }
 
@@ -91,7 +92,7 @@ async function sendAllCertificates(title, certificateId, ownerName, categoryCert
 
   try {
     const response = await axios.post(
-      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/v2/create-certificate",
+      "https://api-blockchain.kemdikbud.go.id/api/ori-metanesia/v1/rest-api/create-certificate",
       // "http://localhost:3000/api/ori-metanesia/v1/rest-api/v2/create-certificate",
       formData,
       {

@@ -62,6 +62,96 @@ sequelize
     console.error("Unable to connect to the database:", err);
   });
 
+
+
+  const CertificateNew = sequelize.define("CertificateNew", {
+    certificateId: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      primaryKey: true,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ownerName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    categoryCertificate: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    image: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    date: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    nip: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    tempatLahir: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    jabatan: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    pangkat: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    instansi: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    unitKerja: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    kualifikasi: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    penandatangan: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    keterangan: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    expiredDate: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    tanggalLahir: {
+      type: DataTypes.DATEONLY,
+      allowNull: true,
+    },
+    judulAktualisasi: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    lokasi: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    angkatan: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    isIntegrated: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+  });
+
   const Certificate = sequelize.define("Certificate", {
     ownerName: {
       type: DataTypes.STRING,
@@ -121,7 +211,7 @@ app.set("view engine", "ejs");
 const PORT = process.env.APP_PORT || 4000;
 
 app.get("/", async (req, res) => {
-  const certificates = await Certificate.findAll();
+  const certificates = await CertificateNew.findAll();
   res.render("index", { certificates });
 });
 
@@ -137,33 +227,66 @@ app.post("/generatecertificate", async (req, res) => {
   const length = parseInt(req.body.certificate) || 5;
 
   const title = faker.lorem.sentence(3);
+
   const fakeData = Array.from({ length }, () => ({
-    ownerName: faker.person.fullName(),
-    phoneNumber: faker.phone.number(),
-    domicile: faker.location.streetAddress(),
-    email: faker.internet.email(),
-    categoryCertificate: "Peserta",
     certificateId: faker.string.uuid(),
-    title,
-    certificateDate: faker.date.recent().toISOString().split("T")[0],
+    title: faker.lorem.sentence(3),
+    ownerName: faker.person.fullName(),
+    categoryCertificate: "Peserta",
+    date: faker.date.recent().toISOString().split("T")[0],
+    nip: faker.string.numeric(10),
+    tempatLahir: faker.location.city(),
+    jabatan: faker.person.jobTitle(),
+    pangkat: faker.person.jobType(),
+    instansi: faker.company.name(),
+    unitKerja: faker.company.buzzAdjective(),
+    kualifikasi: faker.person.jobArea(),
+    penandatangan: faker.person.fullName(),
+    keterangan: faker.lorem.sentence(),
     expiredDate: faker.date.future().toISOString().split("T")[0],
+    tanggalLahir: faker.date.past().toISOString().split("T")[0],
+    judulAktualisasi: faker.lorem.sentence(),
+    lokasi: faker.location.city(),
+    angkatan: faker.string.numeric(2),
   }));
+  // const fakeData = Array.from({ length }, () => ({
+  //   ownerName: faker.person.fullName(),
+  //   phoneNumber: faker.phone.number(),
+  //   domicile: faker.location.streetAddress(),
+  //   email: faker.internet.email(),
+  //   categoryCertificate: "Peserta",
+  //   certificateId: faker.string.uuid(),
+  //   title,
+  //   certificateDate: faker.date.recent().toISOString().split("T")[0],
+  //   expiredDate: faker.date.future().toISOString().split("T")[0],
+  // }));
+
+  await CertificateNew.bulkCreate(fakeData);
 
   fakeData.unshift({
-    ownerName: "ownerName",
-    phoneNumber: "phoneNumber",
-    domicile: "domicile",
-    email: "email",
-    categoryCertificate: "categoryCertificate",
     certificateId: "certificateId",
     title: "title",
-    certificateDate: "certificateDate",
+    ownerName: "ownerName",
+    categoryCertificate: "categoryCertificate",
+    date: "date",
+    nip: "nip",
+    tempatLahir: "tempatLahir",
+    jabatan: "jabatan",
+    pangkat: "pangkat",
+    instansi: "instansi",
+    unitKerja: "unitKerja",
+    kualifikasi: "kualifikasi",
+    penandatangan: "penandatangan",
+    keterangan: "keterangan",
     expiredDate: "expiredDate",
+    tanggalLahir: "tanggalLahir",
+    judulAktualisasi: "judulAktualisasi",
+    lokasi: "lokasi",
+    angkatan: "angkatan",
   });
 
-  fakeData.shift();
+  console.log({fakeData});
 
-  await Certificate.bulkCreate(fakeData);
 
   // fs.writeFileSync("participants.json", JSON.stringify(fakeData, null, 2));
   // console.log("Data written to file json");
@@ -212,18 +335,34 @@ app.post("/uploadcertificate", async (req, res) => {
   const fileBuffer = fs.readFileSync(path.join(__dirname, 'public', 'outputpdf', `${req.body.certificateId}.pdf`));
   const file = new Blob([fileBuffer], { type: 'application/pdf' });
   const formData = new FormData();
-  formData.append("title", req.body.title);
+  const curDate = new Date().toISOString().split('T')[0];
+
+
   formData.append("certificateId", req.body.certificateId);
+  formData.append("title", req.body.title);
   formData.append("ownerName", req.body.ownerName);
   formData.append("category", req.body.categoryCertificate);
-  formData.append("publishDate", req.body.certificateDate);
+  formData.append("publishDate", curDate);
+  formData.append("nip", req.body.nip);
+  formData.append("tempatLahir", req.body.tempatLahir);
+  formData.append("jabatan", req.body.jabatan);
+  formData.append("pangkat", req.body.pangkat);
+  formData.append("instansi", req.body.instansi);
+  formData.append("unitKerja", req.body.unitKerja);
+  formData.append("kualifikasi", req.body.kualifikasi);
+  formData.append("penandatangan", req.body.penandatangan);
+  formData.append("keterangan", req.body.keterangan);
   formData.append("expiredDate", req.body.expiredDate);
-  formData.append("email", req.body.email);
+  formData.append("tanggalLahir", req.body.tanggalLahir);
+  formData.append("judulAktualisasi", req.body.judulAktualisasi);
+  formData.append("lokasi", req.body.lokasi);
+  formData.append("angkatan", req.body.angkatan);
   formData.append("image", file, `${req.body.certificateId}.pdf`);
 
   try {
     const response = await axios.post(
-      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/v2/create-certificate",
+      // "https://api-blockchain.kemdikbud.go.id/api/ori-metanesia/v1/rest-api/v2/create-certificate",
+      "http://localhost:3000/api/ori-metanesia/v1/rest-api/v2/create-certificate",
       formData,
       {
         headers: {
@@ -232,7 +371,7 @@ app.post("/uploadcertificate", async (req, res) => {
         },
       }
     );
-    await Certificate.update({ isIntegrated: true }, { where: { certificateId: req.body.certificateId } });
+    await CertificateNew.update({ isIntegrated: true }, { where: { certificateId: req.body.certificateId } });
     res.send({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -240,23 +379,41 @@ app.post("/uploadcertificate", async (req, res) => {
   }
 });
 
+
+
 app.post("/uploadcertificate-direct", async (req, res) => {
   const fileBuffer = fs.readFileSync(path.join(__dirname, 'public', 'outputpdf', `${req.body.certificateId}.pdf`));
   const file = new Blob([fileBuffer], { type: 'application/pdf' });
+  console.log(file);
+
+  const curDate = new Date().toISOString().split('T')[0];
+
   const formData = new FormData();
-  formData.append("title", req.body.title);
   formData.append("certificateId", req.body.certificateId);
+  formData.append("title", req.body.title);
   formData.append("ownerName", req.body.ownerName);
   formData.append("category", req.body.categoryCertificate);
-  formData.append("publishDate", req.body.certificateDate);
+  formData.append("publishDate", curDate);
+  formData.append("nip", req.body.nip);
+  formData.append("tempatLahir", req.body.tempatLahir);
+  formData.append("jabatan", req.body.jabatan);
+  formData.append("pangkat", req.body.pangkat);
+  formData.append("instansi", req.body.instansi);
+  formData.append("unitKerja", req.body.unitKerja);
+  formData.append("kualifikasi", req.body.kualifikasi);
+  formData.append("penandatangan", req.body.penandatangan);
+  formData.append("keterangan", req.body.keterangan);
   formData.append("expiredDate", req.body.expiredDate);
-  formData.append("email", req.body.email);
+  formData.append("tanggalLahir", req.body.tanggalLahir);
+  formData.append("judulAktualisasi", req.body.judulAktualisasi);
+  formData.append("lokasi", req.body.lokasi);
+  formData.append("angkatan", req.body.angkatan);
   formData.append("image", file, `${req.body.certificateId}.pdf`);
 
   try {
     const response = await axios.post(
-      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/create-certificate",
-      // "http://localhost:3000/api/ori-metanesia/v1/rest-api/create-certificate",
+      // "https://api-blockchain.kemdikbud.go.id/api/ori-metanesia/v1/rest-api/create-certificate",
+      "http://localhost:3000/api/ori-metanesia/v1/rest-api/create-certificate",
       formData,
       {
         headers: {
@@ -265,10 +422,10 @@ app.post("/uploadcertificate-direct", async (req, res) => {
         },
       }
     );
-    await Certificate.update({ isIntegrated: true }, { where: { certificateId: req.body.certificateId } });
+    await CertificateNew.update({ isIntegrated: true }, { where: { certificateId: req.body.certificateId } });
     res.send({ success: true, data: response.data });
   } catch (error) {
-    console.error(error);
+    console.error(error.response.data);
     res.status(500).send("Error uploading certificate.");
   }
 });

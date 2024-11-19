@@ -226,6 +226,10 @@ function generateCertificate(data) {
     fit: [60, 60],
   });
 
+  doc.image("assets/api-integration.jpg", doc.page.width / 2 - 30, bottomHeight + 70, {
+    fit: [60, 60],
+  });
+
   doc.end();
 }
 

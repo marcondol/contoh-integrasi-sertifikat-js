@@ -92,7 +92,7 @@ async function sendAllCertificates(title, certificateId, ownerName, categoryCert
 
   try {
     const response = await axios.post(
-      "https://api.certificate.telkomblockchain.com/api/ori-metanesia/v1/rest-api/create-certificate",
+      "https://kemendikbud-api.bc-certificate.dev/api/ori-metanesia/v1/rest-api/create-certificate",
       // "http://localhost:3000/api/ori-metanesia/v1/rest-api/create-certificate",
       formData,
       {

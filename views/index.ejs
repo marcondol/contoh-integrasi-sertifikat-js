@@ -5,7 +5,7 @@
     <link href="output.css" rel="stylesheet" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script>
-      function handleSubmit(event, certificateId, ownerName, domicile, email, categoryCertificate, certificateId, title, certificateDate, expiredDate) {
+      function handleSubmit(event, certificateId, title, ownerName, categoryCertificate, date, nip, tempatLahir, jabatan, pangkat, instansi, unitKerja, kualifikasi, penandatangan, keterangan, expiredDate, tanggalLahir, judulAktualisasi, lokasi, angkatan) {
         event.preventDefault();
         fetch('/uploadcertificate', {
           method: 'POST',
@@ -14,13 +14,24 @@
           },
           body: JSON.stringify({
             certificateId: certificateId,
-            ownerName: ownerName,
-            domicile: domicile,
-            email: email,
-            categoryCertificate: categoryCertificate,
             title: title,
-            certificateDate: certificateDate,
-            expiredDate: expiredDate
+            ownerName: ownerName,
+            categoryCertificate: categoryCertificate,
+            date: date,
+            nip: nip,
+            tempatLahir: tempatLahir,
+            jabatan: jabatan,
+            pangkat: pangkat,
+            instansi: instansi,
+            unitKerja: unitKerja,
+            kualifikasi: kualifikasi,
+            penandatangan: penandatangan,
+            keterangan: keterangan,
+            expiredDate: expiredDate,
+            tanggalLahir: tanggalLahir,
+            judulAktualisasi: judulAktualisasi,
+            lokasi: lokasi,
+            angkatan: angkatan,
           })
         })
         .then(response => response.json())
@@ -39,7 +50,7 @@
 
       }
 
-      function handleSubmitDirect(event, certificateId, ownerName, domicile, email, categoryCertificate, certificateId, title, certificateDate, expiredDate) {
+      function handleSubmitDirect(event, certificateId, title, ownerName, categoryCertificate, date, nip, tempatLahir, jabatan, pangkat, instansi, unitKerja, kualifikasi, penandatangan, keterangan, expiredDate, tanggalLahir, judulAktualisasi, lokasi, angkatan) {
         event.preventDefault();
         fetch('/uploadcertificate-direct', {
           method: 'POST',
@@ -48,13 +59,24 @@
           },
           body: JSON.stringify({
             certificateId: certificateId,
-            ownerName: ownerName,
-            domicile: domicile,
-            email: email,
-            categoryCertificate: categoryCertificate,
             title: title,
-            certificateDate: certificateDate,
-            expiredDate: expiredDate
+            ownerName: ownerName,
+            categoryCertificate: categoryCertificate,
+            date: date,
+            nip: nip,
+            tempatLahir: tempatLahir,
+            jabatan: jabatan,
+            pangkat: pangkat,
+            instansi: instansi,
+            unitKerja: unitKerja,
+            kualifikasi: kualifikasi,
+            penandatangan: penandatangan,
+            keterangan: keterangan,
+            expiredDate: expiredDate,
+            tanggalLahir: tanggalLahir,
+            judulAktualisasi: judulAktualisasi,
+            lokasi: lokasi,
+            angkatan: angkatan,
           })
         })
         .then(response => response.json())
@@ -85,31 +107,50 @@
       <thead>
         <tr>
           <th class="py-2">ID</th>
-          <th class="py-2">Name</th>
-          <th class="py-2">domicile</th>
-          <th class="py-2">email</th>
-          <th class="py-2">categoryCertificate</th>
-          <th class="py-2">certificateId</th>
           <th class="py-2">title</th>
-          <th class="py-2">certificateDate</th>
+          <th class="py-2">ownerName</th>
+          <th class="py-2">categoryCertificate</th>
+          <th class="py-2">date</th>
+          <th class="py-2">nip</th>
+          <th class="py-2">tempatLahir</th>
+          <th class="py-2">jabatan</th>
+          <th class="py-2">pangkat</th>
+          <th class="py-2">instansi</th>
+          <th class="py-2">unitKerja</th>
+          <th class="py-2">kualifikasi</th>
+          <th class="py-2">penandatangan</th>
+          <th class="py-2">keterangan</th>
           <th class="py-2">expiredDate</th>
-          <th class="py-2">URL</th>
-          <th class="py-2">Integrasi BC</th>
-          <th class="py-2">Integrasi BC Direct</th>
+          <th class="py-2">tanggalLahir</th>
+          <th class="py-2">judulAktualisasi</th>
+          <th class="py-2">lokasi</th>
+          <th class="py-2">angkatan</th>
+
         </tr>
       </thead>
       <tbody>
         <% certificates.forEach(certificate => { %>
           <tr>
             <td class="border px-4 py-2"><%= certificate.certificateId %></td>
-            <td class="border px-4 py-2"><%= certificate.ownerName %></td>
-            <td class="border px-4 py-2"><%= certificate.domicile %></td>
-            <td class="border px-4 py-2"><%= certificate.email %></td>
-            <td class="border px-4 py-2"><%= certificate.categoryCertificate %></td>
-            <td class="border px-4 py-2"><%= certificate.certificateId %></td>
             <td class="border px-4 py-2"><%= certificate.title %></td>
-            <td class="border px-4 py-2"><%= certificate.certificateDate %></td>
-            <td class="border px-4 py-2"><%= certificate.expiredDate %></td>
+            <td class="border px-4 py-2"><%= certificate.ownerName %></td></td>
+            <td class="border px-4 py-2"><%= certificate.categoryCertificate %></td></td>
+            <td class="border px-4 py-2"><%= certificate.date %></td></td>
+            <td class="border px-4 py-2"><%= certificate.nip %></td></td>
+            <td class="border px-4 py-2"><%= certificate.tempatLahir %></td></td>
+            <td class="border px-4 py-2"><%= certificate.jabatan %></td></td>
+            <td class="border px-4 py-2"><%= certificate.pangkat %></td></td>
+            <td class="border px-4 py-2"><%= certificate.instansi %></td></td>
+            <td class="border px-4 py-2"><%= certificate.unitKerja %></td></td>
+            <td class="border px-4 py-2"><%= certificate.kualifikasi %></td></td>
+            <td class="border px-4 py-2"><%= certificate.penandatangan %></td></td>
+            <td class="border px-4 py-2"><%= certificate.keterangan %></td></td>
+            <td class="border px-4 py-2"><%= certificate.expiredDate %></td></td>
+            <td class="border px-4 py-2"><%= certificate.tanggalLahir %></td></td>
+            <td class="border px-4 py-2"><%= certificate.judulAktualisasi %></td></td>
+            <td class="border px-4 py-2"><%= certificate.lokasi %></td></td>
+            <td class="border px-4 py-2"><%= certificate.angkatan %></td></td>
+
             <td class="border px-4 py-2">
               <a href="outputpdf/<%= certificate.certificateId %>.pdf" target="_blank" class="bg-blue-500 text-white px-4 py-2 rounded">View</a>
             </td>
@@ -119,7 +160,7 @@
               <% if (certificate.isIntegrated) { %>
                 Sudah diintegrasikan
               <% } else { %>
-                <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmit(event, '<%= certificate.certificateId %>', '<%= certificate.ownerName %>', '<%= certificate.domicile %>', '<%= certificate.email %>', '<%= certificate.categoryCertificate %>', '<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.certificateDate %>', '<%= certificate.expiredDate %>')">Integrate</button>
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmit(event,'<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.ownerName %>','<%= certificate.categoryCertificate %>','<%= certificate.date %>','<%= certificate.nip %>','<%= certificate.tempatLahir %>','<%= certificate.jabatan %>','<%= certificate.pangkat %>','<%= certificate.instansi %>','<%= certificate.unitKerja %>','<%= certificate.kualifikasi %>','<%= certificate.penandatangan %>','<%= certificate.keterangan %>','<%= certificate.expiredDate %>','<%= certificate.tanggalLahir %>','<%= certificate.judulAktualisasi %>','<%= certificate.lokasi %>','<%= certificate.angkatan %>')">Integrate</button>
               <% } %>
 
             </td>
@@ -129,7 +170,7 @@
               <% if (certificate.isIntegrated) { %>
                 Sudah diintegrasikan
               <% } else { %>
-                <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmitDirect(event, '<%= certificate.certificateId %>', '<%= certificate.ownerName %>', '<%= certificate.domicile %>', '<%= certificate.email %>', '<%= certificate.categoryCertificate %>', '<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.certificateDate %>', '<%= certificate.expiredDate %>')">Integrate Direct</button>
+                <button class="bg-yellow-500 text-white px-4 py-2 rounded" id="integrate" onclick="handleSubmitDirect(event,'<%= certificate.certificateId %>', '<%= certificate.title %>', '<%= certificate.ownerName %>','<%= certificate.categoryCertificate %>','<%= certificate.date %>','<%= certificate.nip %>','<%= certificate.tempatLahir %>','<%= certificate.jabatan %>','<%= certificate.pangkat %>','<%= certificate.instansi %>','<%= certificate.unitKerja %>','<%= certificate.kualifikasi %>','<%= certificate.penandatangan %>','<%= certificate.keterangan %>','<%= certificate.expiredDate %>','<%= certificate.tanggalLahir %>','<%= certificate.judulAktualisasi %>','<%= certificate.lokasi %>','<%= certificate.angkatan %>')">Integrate Direct</button>
               <% } %>
 
             </td>
